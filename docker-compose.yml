@@ -1,0 +1,25 @@
+services:
+  kcv:
+    build: .
+    image: face-id:latest
+    volumes:
+      - ./data:/data
+    environment:
+      - DATA_DIR=/data
+      - THRESHOLD=0.5
+    command: ["serve"]
+    ports:
+      - "127.0.0.1:5001:5000"
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    environment:
+      API_URL: http://kcv:5000
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - kcv
